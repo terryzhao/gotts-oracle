@@ -32,7 +32,7 @@ impl ExchangeHandler {
         let query = must_get_query!(req);
         let params = QueryParams::from(query);
         let from = parse_param_no_err!(params, "from", "USD".to_owned());
-        let to = parse_param_no_err!(params, "to", "USD".to_owned());
+        let to = parse_param_no_err!(params, "to", "CNY".to_owned());
         let arc_client = w(&self.client)?;
 
         let exchange_rate = crossbeam::scope(|scope| {
