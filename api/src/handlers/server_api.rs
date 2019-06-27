@@ -5,7 +5,6 @@ use futures::{stream, Stream};
 use hyper::{Body, Request, StatusCode};
 use std::sync::Weak;
 use std::thread;
-use tokio::runtime::Runtime;
 
 extern crate gotts_oracle_alphavantage;
 use alphavantage::exchange_rate::ExchangeRate;
@@ -40,7 +39,7 @@ impl ExchangeHandler {
                 let exchange_result = arc_client.get_exchange_rate(&from, &to);
                 let result = match exchange_result {
                     Ok(result) => Ok(result),
-                    Err(e) => Err(ErrorKind::RequestError(
+                    Err(_e) => Err(ErrorKind::RequestError(
                         "query alphavantage failed!".to_owned(),
                     ))?,
                 };
