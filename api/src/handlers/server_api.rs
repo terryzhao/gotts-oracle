@@ -15,6 +15,7 @@
 use crate::rest::*;
 use crate::router::{Handler, ResponseFuture};
 use crate::web::*;
+use chrono::{DateTime, FixedOffset, SecondsFormat, TimeZone, Utc};
 use futures::{stream, Stream};
 use hyper::{Body, Request, StatusCode};
 use std::sync::Weak;
@@ -22,6 +23,7 @@ use std::thread;
 
 extern crate gotts_oracle_alphavantage;
 use alphavantage::exchange_rate::ExchangeRate;
+use alphavantage::exchange_rate::ExchangeRateResult;
 use gotts_oracle_alphavantage as alphavantage;
 
 pub struct IndexHandler {
@@ -41,7 +43,7 @@ pub struct ExchangeHandler {
 }
 
 impl ExchangeHandler {
-    fn get_rate(&self, req: Request<Body>) -> Result<f64, Error> {
+    fn get_rate(&self, req: Request<Body>) -> Result<ExchangeRateResult, Error> {
         let query = must_get_query!(req);
         let params = QueryParams::from(query);
         let from = parse_param_no_err!(params, "from", "USD".to_owned());
@@ -64,14 +66,18 @@ impl ExchangeHandler {
             handle.join().unwrap()
         });
 
-        let result = exchange_rate.unwrap();
-
-        let rate = match result {
-            Ok(result) => Ok(result.rate),
-            Err(_e) => Ok(0.00),
+        let result: ExchangeRate = exchange_rate.unwrap().unwrap();
+        let exchange_rate_result = ExchangeRateResult {
+            from: result.from.code.to_string(),
+            to: result.to.code.to_string(),
+            rate: result.rate,
+            date: result
+                .date
+                .to_rfc3339_opts(SecondsFormat::Secs, true)
+                .to_string(),
         };
 
-        rate
+        Ok(exchange_rate_result)
     }
 }
 

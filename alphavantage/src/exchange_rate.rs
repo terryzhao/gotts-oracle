@@ -40,6 +40,19 @@ pub struct ExchangeRate {
     pub date: DateTime<Tz>,
 }
 
+/// Represents the exchange rate for a currency pair.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExchangeRateResult {
+    /// Currency to get the exchange rate for.
+    pub from: String,
+    /// Destination currency for the exchange rate.
+    pub to: String,
+    /// Value of the exchange rate.
+    pub rate: f64,
+    /// Date the exchange rate corresponds to.
+    pub date: String,
+}
+
 pub(crate) mod parser {
     use super::*;
     use crate::deserialize::{from_str, parse_date};

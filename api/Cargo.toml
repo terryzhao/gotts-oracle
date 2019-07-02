@@ -28,6 +28,8 @@ futures = "0.1.21"
 rustls = "0.13"
 url = "1.7.0"
 crossbeam = "0.7.1"
+chrono = "0.4.7"
+chrono-tz = "0.5.1"
 
 gotts_oracle_alphavantage = { path = "../alphavantage", version = "0.1.0" }
 
